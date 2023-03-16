@@ -9,7 +9,7 @@ builder.Services.AddScoped<IUser, UserDomain>();
 builder.Services.AddScoped<ILog, LogDomain>();
 builder.Services.AddScoped<IInput, InputDomain>();
 builder.Services.AddScoped<IOutput, OutputDomain>();
-builder.Services.AddScoped<IBalance, BalanceDomain>();
+
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options =>
@@ -25,6 +25,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+app.UseCors(x => x
+            .AllowAnyOrigin() // Permite todas as origens
+            .AllowAnyMethod() // Permite todos os métodos
+            .AllowAnyHeader()) // Permite todos os cabeçalhos
+            .UseAuthentication();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

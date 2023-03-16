@@ -6,7 +6,6 @@ namespace ms_controle_financeiro.Data
     public class AppDBContext : DbContext
     {
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Balance> Balances { get; set; }
         public virtual DbSet<Input> Inputs { get; set; }
         public virtual DbSet<Output> Outputs { get; set; }
         public virtual DbSet<Log> Logs { get; set; }
@@ -31,10 +30,12 @@ namespace ms_controle_financeiro.Data
             .HasForeignKey(output => output.UserId);
 
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Balance>()
-            .HasOne(balance => balance.User)
-            .WithOne(user => user.Balances)
-            .HasForeignKey<Balance>(balance => balance.UserId);
+            modelBuilder.Entity<Log>()
+            .HasOne(log => log.User)
+            .WithMany(user => user.Logs)
+            .HasForeignKey(log => log.UserId);
+
+
         }
 
     }

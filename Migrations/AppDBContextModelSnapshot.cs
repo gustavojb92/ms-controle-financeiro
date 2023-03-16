@@ -25,35 +25,6 @@ namespace mscontrolefinanceiro.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Balance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_update");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.Property<double>("Value")
-                        .HasColumnType("double precision")
-                        .HasColumnName("value");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("balance");
-                });
-
             modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Input", b =>
                 {
                     b.Property<int>("Id")
@@ -96,18 +67,20 @@ namespace mscontrolefinanceiro.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<double>("Balance")
+                        .HasColumnType("double precision")
+                        .HasColumnName("balance");
+
+                    b.Property<bool>("Received")
+                        .HasColumnType("boolean")
+                        .HasColumnName("received");
+
                     b.Property<DateTime>("TransitionDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("transition_date");
 
-                    b.Property<string>("TransitionType")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("transition_type");
-
-                    b.Property<string>("User")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
                         .HasColumnName("user");
 
                     b.Property<double>("Value")
@@ -115,6 +88,8 @@ namespace mscontrolefinanceiro.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("log");
                 });
@@ -165,9 +140,18 @@ namespace mscontrolefinanceiro.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<double>("Balances")
+                        .HasColumnType("double precision")
+                        .HasColumnName("balances");
+
                     b.Property<DateTime>("Birth")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("birth");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
 
                     b.Property<double>("ExpectedSalary")
                         .HasColumnType("double precision")
@@ -183,11 +167,6 @@ namespace mscontrolefinanceiro.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password");
 
-                    b.Property<string>("UserLogin")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("user_login");
-
                     b.Property<string>("Work")
                         .IsRequired()
                         .HasColumnType("text")
@@ -198,21 +177,21 @@ namespace mscontrolefinanceiro.Migrations
                     b.ToTable("user");
                 });
 
-            modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Balance", b =>
+            modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Input", b =>
                 {
                     b.HasOne("ms_controle_financeiro.Model.Entities.User", "User")
-                        .WithOne("Balances")
-                        .HasForeignKey("ms_controle_financeiro.Model.Entities.Balance", "UserId")
+                        .WithMany("Inputs")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Input", b =>
+            modelBuilder.Entity("ms_controle_financeiro.Model.Entities.Log", b =>
                 {
                     b.HasOne("ms_controle_financeiro.Model.Entities.User", "User")
-                        .WithMany("Inputs")
+                        .WithMany("Logs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -233,10 +212,9 @@ namespace mscontrolefinanceiro.Migrations
 
             modelBuilder.Entity("ms_controle_financeiro.Model.Entities.User", b =>
                 {
-                    b.Navigation("Balances")
-                        .IsRequired();
-
                     b.Navigation("Inputs");
+
+                    b.Navigation("Logs");
 
                     b.Navigation("Outputs");
                 });

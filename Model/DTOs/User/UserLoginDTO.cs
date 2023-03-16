@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 public class UserLoginDTO
 {
 
-    public string UserLogin { get; set; }
+    public string Email { get; set; }
     public string Password { get; set; }
 
 

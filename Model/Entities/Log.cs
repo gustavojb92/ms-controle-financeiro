@@ -1,6 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ms_controle_financeiro.Model.Entities;
 
@@ -14,17 +15,24 @@ public class Log
 
     [Column("user")]
     [Required]
-    public string User { get; set; }
+    public int UserId { get; set; }
 
     [Column("value")]
     [Required]
     public Double Value { get; set; }
 
-    [Column("transition_type")]
+    [Column("balance")]
     [Required]
-    public string TransitionType { get; set; }
+    public Double Balance { get; set; }
+
+    [Column("received")]
+    [Required]
+    public Boolean Received { get; set; }
 
     [Column("transition_date")]
     [Required]
     public DateTime TransitionDate { get; set; }
+
+    [JsonIgnore]
+    public virtual User User { get; set; }
 }

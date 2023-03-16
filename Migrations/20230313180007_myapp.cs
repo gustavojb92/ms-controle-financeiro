@@ -7,64 +7,28 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace mscontrolefinanceiro.Migrations
 {
     /// <inheritdoc />
-    public partial class mymigrations : Migration
+    public partial class myapp : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "log",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user = table.Column<string>(type: "text", nullable: false),
-                    value = table.Column<double>(type: "double precision", nullable: false),
-                    transitiontype = table.Column<string>(name: "transition_type", type: "text", nullable: false),
-                    transitiondate = table.Column<DateTime>(name: "transition_date", type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_log", x => x.id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "user",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    userlogin = table.Column<string>(name: "user_login", type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     work = table.Column<string>(type: "text", nullable: false),
-                    expectedsalary = table.Column<double>(name: "expected_salary", type: "double precision", nullable: false)
+                    expectedsalary = table.Column<double>(name: "expected_salary", type: "double precision", nullable: false),
+                    balances = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "balance",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    userid = table.Column<int>(name: "user_id", type: "integer", nullable: false),
-                    value = table.Column<double>(type: "double precision", nullable: false),
-                    lastupdate = table.Column<DateTime>(name: "last_update", type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_balance", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_balance_user_user_id",
-                        column: x => x.userid,
-                        principalTable: "user",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,6 +48,29 @@ namespace mscontrolefinanceiro.Migrations
                     table.ForeignKey(
                         name: "FK_input_user_user_id",
                         column: x => x.userid,
+                        principalTable: "user",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "log",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    user = table.Column<int>(type: "integer", nullable: false),
+                    value = table.Column<double>(type: "double precision", nullable: false),
+                    balance = table.Column<double>(type: "double precision", nullable: false),
+                    received = table.Column<bool>(type: "boolean", nullable: false),
+                    transitiondate = table.Column<DateTime>(name: "transition_date", type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_log", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_log_user_user",
+                        column: x => x.user,
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -113,15 +100,14 @@ namespace mscontrolefinanceiro.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_balance_user_id",
-                table: "balance",
-                column: "user_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_input_user_id",
                 table: "input",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_log_user",
+                table: "log",
+                column: "user");
 
             migrationBuilder.CreateIndex(
                 name: "IX_output_user_id",
@@ -132,9 +118,6 @@ namespace mscontrolefinanceiro.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "balance");
-
             migrationBuilder.DropTable(
                 name: "input");
 

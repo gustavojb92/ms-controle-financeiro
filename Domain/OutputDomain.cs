@@ -11,13 +11,11 @@ namespace ms_controle_financeiro.Domain
         public readonly AppDBContext _context;
 
         public readonly IMapper _imapper;
-        public readonly IBalance _IBalance;
 
-        public OutputDomain(AppDBContext contex, IMapper imapper, IBalance iBalance)
+        public OutputDomain(AppDBContext contex, IMapper imapper)
         {
             _context = contex;
             _imapper = imapper;
-            _IBalance = iBalance;
         }
         public IEnumerable<ReadOutputDTO> GetAll()
         {
@@ -36,14 +34,20 @@ namespace ms_controle_financeiro.Domain
         public ReadOutputDTO Post(AddOutputDTO obj)
         {
             Output output = _imapper.Map<Output>(obj);
-            var balance = _context.Balances.FirstOrDefault(x => x.UserId == obj.UserId);
             var user = _context.Users.FirstOrDefault(x => x.Id == obj.UserId);
+            if (user == null)
+            {
+                return null;
+            }
             var log = new Log();
-            log.User = user.Name;
+            log.UserId = user.Id;
             log.Value = obj.Value;
-            log.TransitionType = "Saída";
+            log.Received = false;
             log.TransitionDate = obj.OutputDate;
-            balance.Value = balance.Value - obj.Value;
+            log.Balance = user.Balances - obj.Value;
+            var objUser = user;
+            objUser.Balances = user.Balances - obj.Value;
+            _imapper.Map(objUser, user);
             _context.Outputs.Add(output);
             _context.Logs.Add(log);
             _context.SaveChanges();

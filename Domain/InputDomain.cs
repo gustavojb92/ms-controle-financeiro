@@ -35,14 +35,20 @@ namespace ms_controle_financeiro.Domain
         public ReadInputDTO Post(AddInputDTO obj)
         {
             Input input = _imapper.Map<Input>(obj);
-            var balance = _context.Balances.FirstOrDefault(x => x.UserId == obj.UserId);
             var user = _context.Users.FirstOrDefault(x => x.Id == obj.UserId);
+            if (user == null)
+            {
+                return null;
+            }
             var log = new Log();
-            log.User = user.Name;
+            log.UserId = user.Id;
             log.Value = obj.Value;
-            log.TransitionType = "Entrada";
+            log.Received = true;
             log.TransitionDate = obj.InputDate;
-            balance.Value = balance.Value + obj.Value;
+            log.Balance = user.Balances + obj.Value;
+            var objUser = user;
+            objUser.Balances = user.Balances + obj.Value;
+            _imapper.Map(objUser, user);
             _context.Inputs.Add(input);
             _context.Logs.Add(log);
             _context.SaveChanges();

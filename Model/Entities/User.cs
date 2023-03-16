@@ -11,9 +11,9 @@ public class User
     [Required]
     public int Id { get; set; }
 
-    [Column("user_login")]
+    [Column("email")]
     [Required]
-    public string UserLogin { get; set; }
+    public string Email { get; set; }
 
     [Column("password")]
     [Required]
@@ -31,16 +31,20 @@ public class User
     [Required]
     public string Work { get; set; }
 
-    [Column("expected_salary")]
     [Required]
+    [Column("expected_salary")]
     public Double ExpectedSalary { get; set; }
+
+    [Required]
+    [Column("balances")]
+    public Double Balances { get; set; }
 
     [JsonIgnore]
     public virtual List<Input> Inputs { get; set; }
 
     [JsonIgnore]
     public virtual List<Output> Outputs { get; set; }
-
     [JsonIgnore]
-    public virtual Balance Balances { get; set; }
+    public virtual List<Log> Logs { get; set; }
+
 }

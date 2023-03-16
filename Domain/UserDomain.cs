@@ -37,16 +37,19 @@ namespace ms_controle_financeiro.Domain
             _context.Users.Add(user);
             _context.SaveChanges();
             ReadUserDTO createdUser = _imapper.Map<ReadUserDTO>(user);
-            if (createdUser != null)
+            if (createdUser == null)
             {
-                var balance = new Balance();
-                balance.Value = 0;
-                balance.UserId = createdUser.Id;
-                balance.LastUpdate = DateTime.UtcNow.Date;
-                _context.Balances.Add(balance);
-                _context.SaveChanges();
+                return null;
 
             }
+            var log = new Log();
+            log.Value = 0;
+            log.UserId = createdUser.Id;
+            log.TransitionDate = DateTime.UtcNow.Date;
+            log.Received = true;
+            log.Balance = 0;
+            _context.Logs.Add(log);
+            _context.SaveChanges();
             return createdUser;
         }
 
@@ -77,16 +80,17 @@ namespace ms_controle_financeiro.Domain
 
         }
 
-        public bool Login(UserLoginDTO userLogin)
+        public ReadUserDTO Login(UserLoginDTO userLogin)
         {
-            var findUser = _context.Users.FirstOrDefault(x => x.UserLogin == userLogin.UserLogin);
+            var findUser = _context.Users.FirstOrDefault(x => x.Email == userLogin.Email);
             if (findUser != null && findUser.Password == userLogin.Password)
             {
-                return true;
+                ReadUserDTO userDTO = _imapper.Map<ReadUserDTO>(findUser);
+                return userDTO;
             }
             else
             {
-                return false;
+                return null;
             }
         }
     }

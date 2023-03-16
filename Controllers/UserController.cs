@@ -50,11 +50,13 @@ namespace ms_controle_financeiro.Controllers
         [HttpPost("login")]
         public IActionResult Post([FromBody] UserLoginDTO userDTO)
         {
-            var user = _iUser.Login(userDTO);
-            return user ?
-             Ok()
-            :
-            BadRequest("Login Inválido");
+            var login = _iUser.Login(userDTO);
+
+            if (login == null)
+            {
+                return BadRequest("Usuário ou senha invalidos.");
+            }
+            return Ok(login);
 
         }
 

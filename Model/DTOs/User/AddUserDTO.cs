@@ -14,8 +14,9 @@ namespace ms_controle_financeiro.Model.DTOs.User
         public string Work { get; set; }
 
         public Double ExpectedSalary { get; set; }
+        public Double Balances { get; set; }
 
-        public string UserLogin { get; set; }
+        public string Email { get; set; }
         public string Password { get; set; }
 
 
