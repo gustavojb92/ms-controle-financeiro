@@ -34,6 +34,13 @@ namespace ms_controle_financeiro.Controllers
             return input == null ? BadRequest("Não encontrado!") : Ok(input);
         }
 
+        [HttpGet("by-user/{ID}")]
+        public IActionResult GetByUser(int ID)
+        {
+            var input = _IInput.GetAllByUser(ID);
+            return input == null ? BadRequest("Não encontrado!") : Ok(input);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] AddInputDTO inputDTO)
         {

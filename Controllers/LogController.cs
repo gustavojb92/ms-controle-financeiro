@@ -29,6 +29,13 @@ namespace ms_controle_financeiro.Controllers
             return logs == null ? BadRequest("Não encontrado") : Ok(logs);
         }
 
+        [HttpGet("by-user/{ID}")]
+        public IActionResult GetByUser(int ID)
+        {
+            var logs = _ilog.GetAllByUser(ID);
+            return logs == null ? BadRequest("Não encontrado!") : Ok(logs);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] AddLogDTO logDTO)
         {
@@ -50,13 +57,13 @@ namespace ms_controle_financeiro.Controllers
             return log ? NoContent() : BadRequest("Não encontrado");
         }
 
-        [HttpGet("/search/initial={initalDate}/final={finalDate}")]
-        public IActionResult Search(DateTime initalDate, DateTime finalDate)
+        [HttpGet("/search/initial={initalDate}/final={finalDate}/user-id={id}")]
+        public IActionResult Search(DateTime initalDate, DateTime finalDate, int id)
         {
             var dates = new FilterLogDTO();
             dates.InitialDate = initalDate;
             dates.FinalDate = finalDate;
-            var logs = _ilog.Search(dates);
+            var logs = _ilog.Search(dates, id);
             return logs == null ? BadRequest("Não há registros para o periodo") : Ok(logs);
         }
     }

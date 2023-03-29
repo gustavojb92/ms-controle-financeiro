@@ -7,6 +7,6 @@ namespace ms_controle_financeiro.Interfaces
 {
     public interface ISearchLog<in A, out T>
     {
-        IEnumerable<T> Search(A obj);
+        IEnumerable<T> Search(A obj, int Id);
     }
 }

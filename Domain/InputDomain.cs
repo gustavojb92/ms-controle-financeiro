@@ -32,6 +32,17 @@ namespace ms_controle_financeiro.Domain
             return inputDTO;
         }
 
+        public IEnumerable<ReadInputDTO> GetAllByUser(int id)
+        {
+            var input = _context.Inputs.Where(x => x.UserId == id).ToList().OrderByDescending(x => x.Id);
+            if (input == null)
+            {
+                return null;
+            }
+            IEnumerable<ReadInputDTO> inputsDTO = _imapper.Map<IEnumerable<ReadInputDTO>>(input);
+            return inputsDTO;
+        }
+
         public ReadInputDTO Post(AddInputDTO obj)
         {
             Input input = _imapper.Map<Input>(obj);
@@ -45,9 +56,9 @@ namespace ms_controle_financeiro.Domain
             log.Value = obj.Value;
             log.Received = true;
             log.TransitionDate = obj.InputDate;
-            log.Balance = user.Balances + obj.Value;
             var objUser = user;
             objUser.Balances = user.Balances + obj.Value;
+            log.Balance = objUser.Balances;
             _imapper.Map(objUser, user);
             _context.Inputs.Add(input);
             _context.Logs.Add(log);
@@ -75,5 +86,6 @@ namespace ms_controle_financeiro.Domain
             _context.SaveChanges();
             return true;
         }
+
     }
 }

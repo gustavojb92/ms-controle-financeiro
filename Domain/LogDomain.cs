@@ -33,6 +33,16 @@ namespace ms_controle_financeiro.Domain
             return logDTO;
         }
 
+        public IEnumerable<ReadLogDTO> GetAllByUser(int id)
+        {
+            var logs = _context.Logs.Where(x => x.UserId == id).ToList().OrderByDescending(x => x.Id);
+            if (logs == null)
+            {
+                return null;
+            }
+            IEnumerable<ReadLogDTO> logsDTO = _imapper.Map<IEnumerable<ReadLogDTO>>(logs);
+            return logsDTO;
+        }
         public ReadLogDTO Post(AddLogDTO obj)
         {
             Log log = _imapper.Map<Log>(obj);
@@ -63,9 +73,9 @@ namespace ms_controle_financeiro.Domain
             return true;
         }
 
-        public IEnumerable<ReadLogDTO> Search(FilterLogDTO period)
+        public IEnumerable<ReadLogDTO> Search(FilterLogDTO period, int Id)
         {
-            var logs = _context.Logs.Where(log => log.TransitionDate > period.InitialDate && log.TransitionDate < period.FinalDate).ToList().OrderByDescending(log => log.TransitionDate);
+            var logs = _context.Logs.Where(log => log.TransitionDate > period.InitialDate && log.TransitionDate < period.FinalDate && log.UserId == Id).ToList().OrderByDescending(log => log.TransitionDate);
             IEnumerable<ReadLogDTO> logsDTO = _imapper.Map<List<ReadLogDTO>>(logs);
             return logsDTO;
         }

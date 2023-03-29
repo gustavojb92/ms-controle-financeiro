@@ -31,6 +31,17 @@ namespace ms_controle_financeiro.Domain
             return outputDTO;
         }
 
+        public IEnumerable<ReadOutputDTO> GetAllByUser(int id)
+        {
+            var outputs = _context.Outputs.Where(x => x.UserId == id).ToList().OrderByDescending(x => x.Id);
+            if (outputs == null)
+            {
+                return null;
+            }
+            IEnumerable<ReadOutputDTO> outputsDTO = _imapper.Map<IEnumerable<ReadOutputDTO>>(outputs);
+            return outputsDTO;
+        }
+
         public ReadOutputDTO Post(AddOutputDTO obj)
         {
             Output output = _imapper.Map<Output>(obj);
@@ -44,9 +55,9 @@ namespace ms_controle_financeiro.Domain
             log.Value = obj.Value;
             log.Received = false;
             log.TransitionDate = obj.OutputDate;
-            log.Balance = user.Balances - obj.Value;
             var objUser = user;
             objUser.Balances = user.Balances - obj.Value;
+            log.Balance = objUser.Balances;
             _imapper.Map(objUser, user);
             _context.Outputs.Add(output);
             _context.Logs.Add(log);
