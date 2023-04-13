@@ -36,6 +36,13 @@ namespace ms_controle_financeiro.Controllers
             return logs == null ? BadRequest("Não encontrado!") : Ok(logs);
         }
 
+        [HttpGet("by-user={userId}/itens={page}/itens-per-page={itensPerPage}")]
+        public IActionResult GetPaginatedByUser(string userId, int page, int itensPerPage)
+        {
+            var logs = _ilog.GetPaginatedByUser(userId, page, itensPerPage);
+            return logs == null ? BadRequest("Não encontrado!") : Ok(logs);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] AddLogDTO logDTO)
         {

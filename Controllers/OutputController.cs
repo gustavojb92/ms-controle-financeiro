@@ -36,6 +36,13 @@ namespace ms_controle_financeiro.Controllers
             return outputs == null ? BadRequest("Não encontrado!") : Ok(outputs);
         }
 
+        [HttpGet("by-user={userId}/itens={page}/itens-per-page={itensPerPage}")]
+        public IActionResult GetPaginatedByUser(string userId, int page, int itensPerPage)
+        {
+            var output = _IOutput.GetPaginatedByUser(userId, page, itensPerPage);
+            return output == null ? BadRequest("Não encontrado!") : Ok(output);
+        }
+
         [HttpPost]
         public IActionResult Post([FromBody] AddOutputDTO outputDTO)
         {

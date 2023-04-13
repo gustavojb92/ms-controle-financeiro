@@ -3,7 +3,7 @@ using ms_controle_financeiro.Data;
 using ms_controle_financeiro.Interfaces;
 using ms_controle_financeiro.Model.DTOs.Log;
 using ms_controle_financeiro.Model.Entities;
-
+using ms_controle_financeiro.Util;
 namespace ms_controle_financeiro.Domain
 {
     public class LogDomain : ILog
@@ -12,10 +12,31 @@ namespace ms_controle_financeiro.Domain
 
         public readonly IMapper _imapper;
 
+
         public LogDomain(AppDBContext contex, IMapper imapper)
         {
             _context = contex;
             _imapper = imapper;
+        }
+
+        public ReadLogPaginatedDTO GetPaginatedByUser(string userId, int page, int itensPerPage)
+        {
+            string decodedUser = Base64Converter.Decode(userId);
+            int idUser = int.Parse(decodedUser);
+            int skip = itensPerPage * (page - 1);
+            int take = itensPerPage;
+
+            List<Log> logs = _context.Logs.Where(l => l.UserId == idUser)
+            .OrderByDescending(l => l.Id)
+            .Skip(skip)
+            .Take(take)
+            .ToList();
+
+            int totalLogs = logs.Count();
+
+            int totalPages = (int)Math.Ceiling((double)totalLogs / (double)itensPerPage);
+
+            return new ReadLogPaginatedDTO(_imapper.Map<List<ReadLogDTO>>(logs), page, totalPages, totalLogs);
         }
 
         public IEnumerable<ReadLogDTO> GetAll()

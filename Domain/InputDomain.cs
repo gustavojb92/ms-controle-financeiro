@@ -3,6 +3,7 @@ using ms_controle_financeiro.Data;
 using ms_controle_financeiro.Interfaces;
 using ms_controle_financeiro.Model.DTOs.Input;
 using ms_controle_financeiro.Model.Entities;
+using ms_controle_financeiro.Util;
 
 namespace ms_controle_financeiro.Domain
 {
@@ -41,6 +42,26 @@ namespace ms_controle_financeiro.Domain
             }
             IEnumerable<ReadInputDTO> inputsDTO = _imapper.Map<IEnumerable<ReadInputDTO>>(input);
             return inputsDTO;
+        }
+
+        public ReadInputPaginatedDTO GetPaginatedByUser(string userId, int page, int itensPerPage)
+        {
+            string decodedUser = Base64Converter.Decode(userId);
+            int idUser = int.Parse(decodedUser);
+            int skip = itensPerPage * (page - 1);
+            int take = itensPerPage;
+
+            List<Input> inputs = _context.Inputs.Where(i => i.UserId == idUser)
+            .OrderByDescending(i => i.Id)
+            .Skip(skip)
+            .Take(take)
+            .ToList();
+
+            int totalLogs = inputs.Count();
+
+            int totalPages = (int)Math.Ceiling((double)totalLogs / (double)itensPerPage);
+
+            return new ReadInputPaginatedDTO(_imapper.Map<List<ReadInputDTO>>(inputs), page, totalPages, totalLogs);
         }
 
         public ReadInputDTO Post(AddInputDTO obj)
