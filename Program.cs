@@ -2,13 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using ms_controle_financeiro.Data;
 using ms_controle_financeiro.Domain;
 using ms_controle_financeiro.Interfaces;
-
+using ms_controle_financeiro.Rest;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUser, UserDomain>();
 builder.Services.AddScoped<ILog, LogDomain>();
 builder.Services.AddScoped<IInput, InputDomain>();
 builder.Services.AddScoped<IOutput, OutputDomain>();
+builder.Services.AddScoped<IBanks, BanksDomain>();
+builder.Services.AddScoped<IBanksRest, GetBanksRest>();
 
 
 // Add services to the container.
